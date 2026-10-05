@@ -33,7 +33,7 @@ function removeFromArray(index, fieldType) {
         <div class="flex flex-col gap-1">
             <label for="measurements">Measurement</label>
             <select
-                v-model="input.measurements"
+                v-model="input.measurement"
                 name="ingredients[]"
                 class='bg-gray-200 dark:bg-gray-800 p-2 w-full invalid:border-1 invalid:border-red-500'
                 required
