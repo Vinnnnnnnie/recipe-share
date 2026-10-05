@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class IngredientResource extends JsonResource {
-    private readonly int $id;
-    private string $name;
-    private object $pivot;
+    protected readonly int $id;
+    protected string $name;
+    protected object $pivot;
 
     /**
      * Transform the resource into an array.
