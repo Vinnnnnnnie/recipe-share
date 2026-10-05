@@ -10,8 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
-{
+class User extends Authenticatable {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
     use Notifiable;
@@ -48,16 +47,14 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
+    protected function casts(): array {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
-    public static function addReputation(User|int $user, int $reputation): void
-    {
+    public static function addReputation(User|int $user, int $reputation): void {
         // If given ID instead of User object
         if (is_int($user)) {
             $user = User::find($user, ['id', 'reputation']);
@@ -67,8 +64,7 @@ class User extends Authenticatable
         $user->update(['reputation' => $newReputation]);
     }
 
-    public static function subtractReputation(User|int $user, int $reputation): void
-    {
+    public static function subtractReputation(User|int $user, int $reputation): void {
         // If given ID instead of User object
         if (is_int($user)) {
             $user = User::find($user, ['id', 'reputation']);
@@ -78,35 +74,29 @@ class User extends Authenticatable
         $user->update(['reputation' => $newReputation]);
     }
 
-    public function totalReputation(): int
-    {
+    public function totalReputation(): int {
         return 10;
         // Add number of recipes
         // Add number of comments
     }
 
-    public function recipes()
-    {
+    public function recipes() {
         return $this->hasMany(Recipe::class);
     }
 
-    public function followers()
-    {
+    public function followers() {
         return $this->belongsToMany(User::class, 'followers', 'user_id', 'follower_id')->withTimestamps();
     }
 
-    public function following()
-    {
+    public function following() {
         return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id')->withTimestamps();
     }
 
-    public function comments()
-    {
+    public function comments() {
         return $this->hasMany(Comment::class);
     }
 
-    public function savedRecipes()
-    {
+    public function savedRecipes() {
         return $this->belongsToMany(Recipe::class, 'saved_recipes');
     }
 }

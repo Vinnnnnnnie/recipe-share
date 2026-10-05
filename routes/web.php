@@ -34,7 +34,7 @@ Route::get('/public/images/users/{filename}/{height?}/{width?}', function (strin
     }
     $imageData = file_get_contents($path);
 
-    $image =  Image::decode($imageData)->cover($height, $width);
+    $image = Image::decode($imageData)->cover($height, $width);
     return response()->image($image);
 })->name('image.users');
 
@@ -46,7 +46,7 @@ Route::get('/public/images/recipes/{filename}/{height?}/{width?}', function (str
     }
     $imageData = file_get_contents($path);
 
-    $image =  Image::decode($imageData)->cover($height, $width);
+    $image = Image::decode($imageData)->cover($height, $width);
     return response()->image($image);
 })->name('image.recipes');
 
@@ -95,8 +95,6 @@ Route::post('/recipes/{recipe}', [CommentController::class, 'store'])->name('com
 Route::delete('/comment/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
 
-Route::get('/games', fn()
-=> Inertia::render('ComingSoon'))->name('games.index');
+Route::get('/games', fn() => Inertia::render('ComingSoon'))->name('games.index');
 
-Route::get('/games/*', fn()
-=> Inertia::render('ComingSoon'));
+Route::get('/games/*', fn() => Inertia::render('ComingSoon'));

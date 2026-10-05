@@ -16,18 +16,16 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
-{
-    public function showRegister()
-    {
+class AuthController extends Controller {
+    public function showRegister() {
         return Inertia::render('Auth/Register');
     }
-    public function showLogin()
-    {
+
+    public function showLogin() {
         return Inertia::render('Auth/Login');
     }
-    public function register(Request $request)
-    {
+
+    public function register(Request $request) {
         $files = Storage::disk('users')->allFiles('');
         if (!$request->image) {
             $image_path = $files[array_rand($files)];
@@ -52,8 +50,8 @@ class AuthController extends Controller
         FacadesAuth::login($user);
         return redirect()->route('recipes.index');
     }
-    public function login(Request $request)
-    {
+
+    public function login(Request $request) {
         $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
@@ -70,8 +68,8 @@ class AuthController extends Controller
             'credentials' => 'Sorry, those credentials did not match our records.',
         ]);
     }
-    public function logout(Request $request)
-    {
+
+    public function logout(Request $request) {
         FacadesAuth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

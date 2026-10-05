@@ -8,10 +8,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\RecipeController;
 use Illuminate\Support\Facades\Storage;
 
-class RecipeImageController extends Controller
-{
-    public function store(Request $request): string
-    {
+class RecipeImageController extends Controller {
+    public function store(Request $request): string {
         $path = $request->file('image')->store('recipes');
         return $path;
     }

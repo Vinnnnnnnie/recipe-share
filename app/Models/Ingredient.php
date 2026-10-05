@@ -13,28 +13,24 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
-class Ingredient extends Model
-{
+class Ingredient extends Model {
     /** @use HasFactory<IngredientFactory> */
     use HasFactory;
 
     protected $fillable = ['name', 'recipe_id', 'number', 'measurement', 'quantity'];
 
-    public function recipes(): BelongsToMany
-    {
+    public function recipes(): BelongsToMany {
         return $this->belongsToMany(Recipe::class, 'recipe_ingredient', 'ingredient_id', 'recipe_id');
     }
 
 
-    protected function casts(): array
-    {
+    protected function casts(): array {
         return [
             'measurement' => Measurement::class,
         ];
     }
 
-    public static function addIngredientsToRecipe(Recipe $recipe, Request $request): \Illuminate\Http\JsonResponse
-    {
+    public static function addIngredientsToRecipe(Recipe $recipe, Request $request): \Illuminate\Http\JsonResponse {
 
         // Validation
         $validated = $request->validate(
@@ -52,10 +48,9 @@ class Ingredient extends Model
 
 
         $counter = 0;
-        foreach ($validated['ingredients'] as $ingredient)
-        {
+        foreach ($validated['ingredients'] as $ingredient) {
             // Does ingredient already exist?
-            if (Ingredient::where($ingredient['name'],'name')->doesntExist()) {
+            if (Ingredient::where($ingredient['name'], 'name')->doesntExist()) {
                 // If it doesn't, make it
                 $ingredientModel = Ingredient::create(
                     [
@@ -64,14 +59,14 @@ class Ingredient extends Model
                 );
             }
             // Find the ingredient
-            $ingredientModel = Ingredient::where('name','=',$ingredient['name'])->get()->first();
+            $ingredientModel = Ingredient::where('name', '=', $ingredient['name'])->get()->first();
 
             // Attach the recipe to the pivot table and add the additional info
             $ingredientModel->recipes()->attach($recipe->id, [
-                    'quantity' => $ingredient['quantity'],
-                    'measurement' => $ingredient['measurement'],
-                    'order' => $counter
-                ]);
+                'quantity' => $ingredient['quantity'],
+                'measurement' => $ingredient['measurement'],
+                'order' => $counter
+            ]);
 
             $counter++;
         }

@@ -9,10 +9,8 @@ use App\Models\Comment;
 use App\Models\User;
 use App\Models\Recipe;
 
-class CommentController extends Controller
-{
-    public function store(Request $request)
-    {
+class CommentController extends Controller {
+    public function store(Request $request) {
         $request->validate([
             'recipe_id' => 'required|exists:recipes,id',
             'comment' => 'required|string|max:1000',
@@ -29,8 +27,8 @@ class CommentController extends Controller
 
         return redirect()->back()->with('success', 'Comment added successfully!');
     }
-    public function destroy(Comment $comment)
-    {
+
+    public function destroy(Comment $comment) {
         if ($comment->user_id === auth()->user()->id) {
             User::subtractReputation($comment->user_id, 1);
             $recipeOwner = Recipe::find($comment->recipe_id, 'user_id');

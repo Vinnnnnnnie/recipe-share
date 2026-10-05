@@ -10,15 +10,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
-class Step extends Model
-{
+class Step extends Model {
     /** @use HasFactory<StepFactory> */
     use HasFactory;
 
     protected $fillable = ['step', 'recipe_id', 'number'];
 
-    public static function addStepsToRecipe(Recipe $recipe, Request $request): void
-    {
+    public static function addStepsToRecipe(Recipe $recipe, Request $request): void {
         $validated = $request->validate(
             [
                 'steps' => 'required|array|min:1',

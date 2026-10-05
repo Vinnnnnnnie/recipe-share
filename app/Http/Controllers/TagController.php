@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class TagController extends Controller
-{
+class TagController extends Controller {
     //
 }

@@ -8,7 +8,8 @@ import { ArrowUpIcon, ArrowDownIcon, XCircleIcon, XMarkIcon, PlusCircleIcon, Plu
 import IngredientEditor from '../Components/IngredientEditor.vue';
 import StepEditor from '../Components/StepEditor.vue';
 const props = defineProps({
-    tags: Object
+    tags: Object,
+    measurements: Array,
 })
 
 const imageUrl = ref('');
@@ -93,11 +94,11 @@ watch(form.errors, (errors)=> {
             <!-- Image Preview -->
             <div class='dark:bg-gray-950 bg-gray-50 w-full flex justify-center align-items-center'>
                 <img v-if="imageUrl" id='image-preview' :src='imageUrl' class='aspect-auto h-fit max-h-80 self-center'>
-            </div>  
-            
+            </div>
+
             <!-- Create Recipe Form -->
             <form @submit.prevent="submit" class='flex flex-col p-4 gap-2' enctype="multipart/form-data">
-                
+
                 <!-- Image File Picker -->
                 <div>
                     <label for="image" class='form-label'>Image</label>
@@ -112,16 +113,16 @@ watch(form.errors, (errors)=> {
                 </div>
 
                 <!-- Ingredients -->
-                 
+
                 <div class="flex flex-col gap-2">
                     <label for="ingredients" class='form-label'>Ingredients</label>
                     <p v-if="form.errors.ingredients" class="text-red-500">{{form.errors.ingredients}}</p>
-                    <IngredientEditor :ingredients></IngredientEditor>
+                    <IngredientEditor :ingredients :measurements></IngredientEditor>
                 </div>
 
                 <!-- Steps -->
                 <div class="flex flex-col gap-2">
-                    <label for="instructions" class='form-label'>Method</label> 
+                    <label for="instructions" class='form-label'>Method</label>
                     <p v-if="form.errors.method" class="text-red-500">{{form.errors.method}}</p>
                     <!-- <p><strong><small>Pressing Enter on your last step will add a new step and focus that</small></strong></p> -->
                     <StepEditor :steps></StepEditor>
@@ -130,28 +131,28 @@ watch(form.errors, (errors)=> {
 
                 <!-- Preparation Time -->
                 <div class="flex flex-col">
-                    <label for="preparation_time" class='form-label'>Preparation Time (minutes)</label> 
+                    <label for="preparation_time" class='form-label'>Preparation Time (minutes)</label>
                     <p v-if="form.errors.preparation_time" class="text-red-500">{{form.errors.preparation_time}}</p>
                     <input v-model="form.preparation_time" type="number" id="preparation_time" class='bg-gray-200 dark:bg-gray-800 p-2' name="preparation_time" value='' required>
                 </div>
 
                 <!-- Cooking Time -->
                 <div class="flex flex-col">
-                    <label for="cooking_time" class='form-label'>Cooking Time (minutes)</label> 
+                    <label for="cooking_time" class='form-label'>Cooking Time (minutes)</label>
                     <p v-if="form.errors.cooking_time" class="text-red-500">{{form.errors.cooking_time}}</p>
                     <input v-model="form.cooking_time" type="number" id="cooking_time" class='bg-gray-200 dark:bg-gray-800 p-2' name="cooking_time" value='' required>
                 </div>
 
                 <!-- Servings -->
                 <div class="flex flex-col">
-                    <label class='form-label' for="servings">Servings</label> 
+                    <label class='form-label' for="servings">Servings</label>
                     <p v-if="form.errors.servings" class="text-red-500">{{form.errors.servings}}</p>
                     <input v-model="form.servings" type="number" id="servings" name="servings" class='bg-gray-200 dark:bg-gray-800 p-2' value='' required>
                 </div>
 
                 <!-- Difficulty -->
                 <div class='w-full'>
-                    <label class='form-label'>Difficulty</label> 
+                    <label class='form-label'>Difficulty</label>
                     <p v-if="form.errors.difficulty" class="text-red-500">{{form.errors.difficulty}}</p>
                     <div class="flex  mb-2">
                         <input v-model="form.difficulty" name="difficulty" id='easy' type="radio" value="Easy">
@@ -171,7 +172,7 @@ watch(form.errors, (errors)=> {
                 <ul class=" select-none  flex flex-row gap-2 flex-wrap">
                     <li v-for="(tag, index) in tags" :key="`tag-${index}`">
                         <input v-model="form.tags" type="checkbox" :id="tag.id" name='tags[]' :value="tag.id" class="hidden peer" />
-                        <label :for="tag.id" class="select-none bg-gray-500 cursor-pointer flex items-center justify-center rounded-lg  
+                        <label :for="tag.id" class="select-none bg-gray-500 cursor-pointer flex items-center justify-center rounded-lg
                                 py-3 px-6 font-bold transition-colors duration-200 ease-in-out peer-checked:bg-blue-500  ">
                                 <span>{{ tag.name }}</span>
                         </label>
@@ -182,6 +183,6 @@ watch(form.errors, (errors)=> {
                 <button class='bg-gray-200 dark:bg-gray-800 p-2' type='submit' :disabled="form.processing">Create Recipe</button>
             </form>
         </div>
-        
+
     </RecipeLayout>
 </template>

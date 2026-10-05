@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\IngredientResource;
 use App\Http\Resources\RecipeResource;
+use App\Measurement;
 use Illuminate\Http\Request;
 use App\Models\Recipe;
 use App\Models\User;
@@ -15,11 +16,9 @@ use Inertia\Inertia;
 use App\Models\Ingredient;
 use App\Models\Step;
 
-class RecipeController extends Controller
-{
+class RecipeController extends Controller {
     //
-    public function index()
-    {
+    public function index() {
         return Inertia::render(
             'Recipes/Index',
             [
@@ -28,8 +27,7 @@ class RecipeController extends Controller
         );
     }
 
-    public function scrollableRecipeList()
-    {
+    public function scrollableRecipeList() {
         return Inertia::scroll(
             fn() => Recipe::with(
                 [
@@ -43,23 +41,23 @@ class RecipeController extends Controller
                     'tags',
                 ]
             )
-            ->select(
-                'id',
-                'title',
-                'user_id',
-                'created_at',
-                'preparation_time',
-                'cooking_time',
-                'servings',
-                'difficulty',
-                'image_path'
-            )
-            ->orderBy('created_at', 'desc')
-            ->paginate()
+                ->select(
+                    'id',
+                    'title',
+                    'user_id',
+                    'created_at',
+                    'preparation_time',
+                    'cooking_time',
+                    'servings',
+                    'difficulty',
+                    'image_path'
+                )
+                ->orderBy('created_at', 'desc')
+                ->paginate()
         );
     }
-    public function show(Recipe $recipe)
-    {
+
+    public function show(Recipe $recipe) {
         $recipe->load('user', 'comments.user', 'tags', 'ingredients', 'steps');
         $comments = $recipe->comments;
         $tags = $recipe->tags;
@@ -73,17 +71,16 @@ class RecipeController extends Controller
             ]
         );
     }
-    public function create()
-    {
+
+    public function create() {
         $tags = Tag::orderBy('name')->get();
-        return Inertia::render('Recipes/Create', ['tags' => $tags]);
+        return Inertia::render('Recipes/Create', ['tags' => $tags, 'measurements' => Measurement::cases()]);
     }
 
     /**
      * @throws \Throwable
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         // Image upload
         if (isset($request->image)) {
             $image_path = $request->image->store("recipes", 'public');
@@ -114,8 +111,8 @@ class RecipeController extends Controller
 
         return redirect()->route('recipes.index')->with('success', 'Recipe added successfully!');
     }
-    public function destroy(Recipe $recipe)
-    {
+
+    public function destroy(Recipe $recipe) {
         if ($recipe->user_id !== auth()->user()->id) {
             return back()->withErrors('Operation not permitted.');
         }
@@ -124,8 +121,7 @@ class RecipeController extends Controller
         return redirect()->route('recipes.index')->with('success', 'Recipe deleted successfully!');
     }
 
-    public function edit($id)
-    {
+    public function edit($id) {
         $recipe = Recipe::where('id', $id)->first()->load('user', 'comments.user', 'tags', 'ingredients', 'steps');
 
         $recipe = new RecipeResource($recipe);
@@ -136,8 +132,7 @@ class RecipeController extends Controller
         return Inertia::render('Recipes/Edit', ['recipe' => $recipe, 'tags' => $tags]);
     }
 
-    public function search(Request $request)
-    {
+    public function search(Request $request) {
         $term = $request->term;
         $validated = $request->validate(['term' => 'required|max:64']);
         $recipes = Inertia::scroll(fn() => Recipe::query()
@@ -166,8 +161,7 @@ class RecipeController extends Controller
         return Inertia::render('Recipes/Search', ['recipes' => $recipes, 'users' => $users]);
     }
 
-    public function update(Request $request)
-    {
+    public function update(Request $request) {
         if (isset($request->image)) {
             $image_path = $request->image->store("recipes", 'public');
             $image_path = str_replace('recipes/', '', $image_path);
@@ -205,12 +199,12 @@ class RecipeController extends Controller
 
         return redirect()->route('recipes.show', $recipe);
     }
-    public function scheduler()
-    {
+
+    public function scheduler() {
         return Inertia::render('Recipes/Scheduler');
     }
-    public function searchByTerm(string $term)
-    {
+
+    public function searchByTerm(string $term) {
         $recipes = Recipe::select('*')
             ->where('title', 'LIKE', '%' . $term . '%')
             ->with(
