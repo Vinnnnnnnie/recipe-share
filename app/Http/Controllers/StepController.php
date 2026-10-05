@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Step;
-use App\Http\Requests\StoreStepsRequest;
-use App\Http\Requests\UpdateStepsRequest;
 
 class StepController extends Controller {
     /**

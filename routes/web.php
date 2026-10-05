@@ -2,16 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Models\Bike;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Intervention\Image\Laravel\Facades\Image;
-use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Format;
 
 Route::inertia('/', 'Home')->name('home');
 

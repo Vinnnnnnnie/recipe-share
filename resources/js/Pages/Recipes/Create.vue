@@ -1,12 +1,11 @@
 <script setup>
 import RecipeLayout from '../Components/RecipeLayout.vue';
-import { Form, Head, useForm, usePage } from '@inertiajs/vue3';
-import { reactive, ref } from 'vue';
-import { watch } from 'vue';
-import { showToast } from '../../Composables/useToast';
-import { ArrowUpIcon, ArrowDownIcon, XCircleIcon, XMarkIcon, PlusCircleIcon, PlusIcon } from '@heroicons/vue/16/solid';
+import {Head, useForm} from '@inertiajs/vue3';
+import {ref, watch} from 'vue';
+import {showToast} from '../../Composables/useToast';
 import IngredientEditor from '../Components/IngredientEditor.vue';
 import StepEditor from '../Components/StepEditor.vue';
+
 const props = defineProps({
     tags: Object,
     measurements: Array,
@@ -54,28 +53,17 @@ const submit = () => {
     });
 }
 
-const shortcutChecker = (event) => {
-    if (event.key === 'Enter') {
-        console.log('Enter pressed, if last step we will add new step and focus new step');
-        // if event div step === step[-1]
-        // otherwise do nothing?
+// const shortcutChecker = (event) => {
+//     if (event.key === 'Enter') {
+//         console.log('Enter pressed, if last step we will add new step and focus new step');
+//         // if event div step === step[-1]
+//         // otherwise do nothing?
+//
+//     } else {
+//         console.log('Key pressed: ', event.key);
+//     }
+// }
 
-    } else {
-        console.log('Key pressed: ', event.key);
-    }
-}
-function shiftUp(index, array) {
-    console.log('Shifting element up');
-    const movedItem = steps.value.splice(index, 1)[0];
-    steps.value.splice(index-1, 0, movedItem)
-
-}
-
-function shiftDown(index, array) {
-    console.log('Shifting element down');
-    const movedItem = steps.value.splice(index, 1)[0];
-    steps.value.splice(index+1, 0, movedItem)
-}
 watch(form.errors, (errors)=> {
     console.log('got an error mate')
     for(const error of errors) {
@@ -93,7 +81,7 @@ watch(form.errors, (errors)=> {
             <h2>Create a New Recipe</h2>
             <!-- Image Preview -->
             <div class='dark:bg-gray-950 bg-gray-50 w-full flex justify-center align-items-center'>
-                <img v-if="imageUrl" id='image-preview' :src='imageUrl' class='aspect-auto h-fit max-h-80 self-center'>
+                <img v-if="imageUrl" id='image-preview' alt="Recipe Image Preview" :src='imageUrl' class='aspect-auto h-fit max-h-80 self-center'>
             </div>
 
             <!-- Create Recipe Form -->

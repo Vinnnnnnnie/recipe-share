@@ -1,6 +1,5 @@
 <script setup>
 import {PlusIcon, XMarkIcon} from '@heroicons/vue/16/solid';
-import Debug from "./Debug.vue";
 
 const props = defineProps({
     ingredients: Object,
