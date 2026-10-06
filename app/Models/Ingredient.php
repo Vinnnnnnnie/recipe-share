@@ -4,72 +4,80 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Http\Resources\IngredientResource;
 use App\Measurement;
 use Database\Factories\IngredientFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 
 class Ingredient extends Model {
-    /** @use HasFactory<IngredientFactory> */
-    use HasFactory;
+	/** @use HasFactory<IngredientFactory> */
+	use HasFactory;
 
-    protected $fillable = ['name', 'recipe_id', 'number', 'measurement', 'quantity'];
+	protected $fillable = ['name', 'recipe_id', 'number', 'measurement', 'quantity'];
 
-    public function recipes(): BelongsToMany {
-        return $this->belongsToMany(Recipe::class, 'recipe_ingredient', 'ingredient_id', 'recipe_id');
-    }
-
-
-    protected function casts(): array {
-        return [
-            'measurement' => Measurement::class,
-        ];
-    }
-
-    public static function addIngredientsToRecipe(Recipe $recipe, Request $request): \Illuminate\Http\JsonResponse {
-
-        // Validation
-        $validated = $request->validate(
-            [
-                'ingredients' => 'required|array|min:1',
-                'ingredients.*.name' => 'required|string|max:64',
-                'ingredients.*.quantity' => 'required|numeric|min:0',
-                'ingredients.*.measurement' => [Rule::enum(Measurement::class)],
-            ],
-            [
-                'ingredients.required|min:1' => 'You must have 1 ingredient.',
-                'ingredients.*.name' => 'Ingredients cannot be greater than 64 characters.',
-            ]
-        );
+	public function recipes(): BelongsToMany {
+		return $this->belongsToMany(Recipe::class, 'recipe_ingredient', 'ingredient_id', 'recipe_id');
+	}
 
 
-        $counter = 0;
-        foreach ($validated['ingredients'] as $ingredient) {
-            // Does ingredient already exist?
-            if (Ingredient::where($ingredient['name'], 'name')->doesntExist()) {
-                // If it doesn't, make it
-                $ingredientModel = Ingredient::create(
-                    [
-                        'name' => $ingredient['name'],
-                    ]
-                );
-            }
-            // Find the ingredient
-            $ingredientModel = Ingredient::where('name', '=', $ingredient['name'])->get()->first();
+	protected function casts(): array {
+		return [
+			'measurement' => Measurement::class,
+		];
+	}
 
-            // Attach the recipe to the pivot table and add the additional info
-            $ingredientModel->recipes()->attach($recipe->id, [
-                'quantity' => $ingredient['quantity'],
-                'measurement' => $ingredient['measurement'],
-                'order' => $counter
-            ]);
+	public static function addIngredientsToRecipe(Recipe $recipe, Request $request): \Illuminate\Http\JsonResponse {
 
-            $counter++;
-        }
-        return response()->json(['status' => 'ok', 'msg' => 'Ingredients added successfully.']);
-    }
+		// Validation
+		$validated = $request->validate(
+			[
+				'ingredients' => 'required|array|min:1',
+				'ingredients.*.name' => 'required|string|max:64',
+				'ingredients.*.quantity' => 'required|numeric|min:0',
+				'ingredients.*.measurement' => [Rule::enum(Measurement::class)],
+			],
+			[
+				'ingredients.required|min:1' => 'You must have 1 ingredient.',
+				'ingredients.*.name' => 'Ingredients cannot be greater than 64 characters.',
+			]
+		);
+
+
+		$counter = 0;
+		foreach ($validated['ingredients'] as $ingredient) {
+			// Does ingredient already exist?
+			if (Ingredient::where($ingredient['name'], 'name')->doesntExist()) {
+				// If it doesn't, make it
+				$ingredient_model = Ingredient::create(
+					[
+						'name' => $ingredient['name'],
+					]
+				);
+			}
+			// Find the ingredient
+			$ingredient_model = Ingredient::where('name', '=', $ingredient['name'])->get()->first();
+
+			// Attach the recipe to the pivot table and add the additional info
+			$ingredient_model->recipes()->attach($recipe->id, [
+				'quantity' => $ingredient['quantity'],
+				'measurement' => $ingredient['measurement'],
+				'order' => $counter
+			]);
+
+			$counter++;
+		}
+		return response()->json(['status' => 'ok', 'msg' => 'Ingredients added successfully.']);
+	}
+
+	public static function searchByTerm(string $term): JsonResource {
+		$results = Ingredient::select("id", "name")
+			->where("name", "LIKE", "%{$term}%");
+
+		return IngredientResource::collection($results);
+	}
 }

@@ -1,5 +1,6 @@
 <script setup>
 import {PlusIcon, XMarkIcon} from '@heroicons/vue/16/solid';
+import IngredientSearch from "./IngredientSearch.vue";
 
 const props = defineProps({
     ingredients: Object,
@@ -48,28 +49,7 @@ function removeFromArray(index, fieldType) {
                 </option>
             </select>
         </div>
-        <div class="flex flex-col w-full gap-1">
-            <label for="name">Ingredient</label>
-            <input
-                v-model="input.name"
-                list="ingredient-list"
-                name="ingredients[]"
-                class='bg-gray-200 dark:bg-gray-800 p-2  w-full invalid:border-1 invalid:border-red-500'
-                maxlength="64"
-                minlength="1"
-                required/>
-            <!--        <IngredientDatalist/>-->
-            <datalist id="ingredient-list">
-                <option value="Potato"></option>
-                <option value="Chicken"></option>
-                <option value="Cheese"></option>
-                <option value="Banana"></option>
-                <option value="Flour"></option>
-                <option value="Sugar"></option>
-                <option value="Salt"></option>
-                <option value="Pepper"></option>
-            </datalist>
-        </div>
+      <IngredientSearch :input="input"/>
 
         <!-- Remove Ingredient -->
         <button
