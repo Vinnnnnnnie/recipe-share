@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Http\Resources\IngredientResource;
 use App\Measurement;
 use Database\Factories\IngredientFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 
 class Ingredient extends Model {
@@ -74,10 +73,10 @@ class Ingredient extends Model {
 		return response()->json(['status' => 'ok', 'msg' => 'Ingredients added successfully.']);
 	}
 
-	public static function searchByTerm(string $term): JsonResource {
-		$results = Ingredient::select("id", "name")
-			->where("name", "LIKE", "%{$term}%");
-
-		return IngredientResource::collection($results);
+	public static function searchByTerm(string $term): Collection {
+		return Ingredient::select("id", "name", 'quantity', 'measurement', 'order')
+			->where("name", "LIKE", "%{$term}%")
+			->join('recipe_ingredient', 'ingredients.id', '=', 'recipe_ingredient.ingredient_id')
+			->get();
 	}
 }

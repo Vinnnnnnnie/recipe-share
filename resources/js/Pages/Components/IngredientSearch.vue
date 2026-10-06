@@ -2,20 +2,27 @@
 import {ref} from "vue";
 import {usePage} from "@inertiajs/vue3";
 
-defineProps({
-  input: {},
-})
 const page = usePage();
 const term = ref('');
+const ingredients = ref([]);
 async function searchIngredients(term) {
   console.log('Term:', term);
+  if (!term)
+    return;
   try {
     let response = await fetch(route('ingredients.searchByTerm', term), {
       method: 'Get',
       headers: {
-        'X-CSRF-TOKEN': page._token
+        _token: page.props.csrf_token,
       }
     })
+    if (!response.ok) {
+      console.log('Ingredient not found, new will be created');
+    }
+    ingredients.value = await response.json();
+  }
+  catch(error) {
+    console.log('Error searching: ',error);
   }
 }
 </script>

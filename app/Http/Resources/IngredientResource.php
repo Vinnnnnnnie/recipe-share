@@ -26,9 +26,9 @@ class IngredientResource extends JsonResource {
 		return [
 			'id' => $this->id,
 			'name' => $this->name,
-			'quantity' => $this->pivot->quantity,
-			'measurement' => $this->pivot->measurement,
-			'order' => $this->pivot->order,
+			'quantity' => $this->pivot?->quantity,
+			'measurement' => $this->pivot?->measurement,
+			'order' => $this->pivot?->order,
 		];
 	}
 }

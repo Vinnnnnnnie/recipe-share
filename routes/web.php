@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\IngredientController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -79,6 +80,10 @@ Route::middleware('auth')->controller(RecipeController::class)->group(function (
 	Route::get('/recipes/edit/{recipe}', 'edit')->name('recipes.edit');
 	Route::post('/recipes/update/{id}', 'update')->name('recipes.update');
 	Route::delete('/recipes/{recipe}', 'destroy')->name('recipes.destroy');
+});
+
+Route::middleware('auth')->controller(IngredientController::class)->group(function (): void {
+	Route::get('/ingredients/searchByTerm/{term}', 'searchByTerm')->name('ingredients.searchByTerm');
 });
 
 Route::controller(RecipeController::class)->group(function (): void {

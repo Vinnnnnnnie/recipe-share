@@ -11,6 +11,7 @@ use App\Models\Recipe;
 use App\Models\Step;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -203,7 +204,7 @@ class RecipeController extends Controller {
 		return Inertia::render('Recipes/Scheduler');
 	}
 
-	public function searchByTerm(string $term) {
+	public function searchByTerm(string $term): JsonResponse {
 		$recipes = Recipe::select('*')
 			->where('title', 'LIKE', '%' . $term . '%')
 			->with(
